@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2></h2>
+    {% for wishlist in wishlists%}
+        
+        
+        {% if wishlist.listing.active%}
+        <div class="container mt-3">
+            <div class="card" style="width:400px">
+                <img class="card-img-top" src="{{wishlist.listing.image_url}}" alt="{{wishlist.listin.title}}" style="width:100%">
+                <div class="card-body">
+                    <h4 class="card-title">{{wishlist.listing.title}}</h4>
+                    <h6 class="card-text">Price: {{wishlist.listing.min_bid}}</h6>
+                    <p class="card-text">{{wishlist.listing.description}}</p>
+                    <a href="{% url 'listing' wishlist.listing.title %}" class="btn btn-primary">See Listing</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        
+        <div class="container mt-3">
+            <div class="card bg-secondary" style="width:400px">
+                <img class="card-img-top" src="{{wishlist.listing.image_url}}" alt="{{wishlist.listin.title}}" style="width:100%">
+                <div class="card-body">
+                    <h4 class="card-title">{{wishlist.listing.title}}</h4>
+                    <h6 class="card-text">Price: {{wishlist.listing.min_bid}}</h6>
+                    <p class="card-text">{{wishlist.listing.description}}</p>
+                    <a href="{% url 'listing' wishlist.listing.title %}" class="btn btn-primary">See Listing</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+    
+{% endblock %}

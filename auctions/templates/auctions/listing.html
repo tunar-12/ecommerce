@@ -1,0 +1,107 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if winner %}
+    <div class="congratulation-area text-center mt-5">
+        <div class="container">
+            <div class="congratulation-wrapper">
+                <div class="congratulation-contents center-text">
+                    <div class="congratulation-contents-icon">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h4 class="congratulation-contents-title"> Congratulations, you have won this auction! </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if isAlert %}
+        <div class="alert alert-danger" role="alert">
+            Your bid must be bigger than current one!
+        </div>
+    {% endif %}
+    {% if congrat%}
+    <div class="alert alert-success" role="alert">
+        You have successfully made a bid!
+    </div>
+    {% endif%}
+    <h2>Listing: {{listing.title}}</h2>
+    {% if user.is_authenticated %}
+        {% if wishlist %}
+            <div style="padding-bottom: 20px; padding-top: 20px;">
+                <a href="{% url 'remove_wishlist' listing.title %}" class="btn btn-secondary">Remove From Watchlist</a>
+            </div>
+        {% else %}
+            <div style="padding-bottom: 20px; padding-top: 20px;">
+                <a href="{% url 'add_wishlist' listing.title %}" class="btn btn-secondary">Add To Watchlist</a>
+            </div>
+        {% endif %}
+        
+    {% endif %}
+    <div>
+        <img src="{{listing.image_url}}" alt="{{listing.title}}" height="300px">
+    </div>
+    <p style="padding-top: 30px; padding-bottom: 15px;">{{listing.description}}</p>
+
+    {% if user.is_authenticated %}
+    {% if listing.active %}
+    {% if listing.max_bid %}
+        <h4>{{listing.max_bid}}$</h4>
+    {%else%}
+        <h4>{{listing.min_bid}}$</h4>
+    {% endif %}
+    {% if isOwner %}
+        {% if listing.max_bid %}
+        <h5>You will have profit</h4>
+        {%else%}
+        <h4 class="text-bg-danger">You will not have any profit!</h4>
+        {% endif %}
+        <form action="{% url 'close_listing' listing.title %}" method="POST">
+            {% csrf_token %}
+            <input class="btn btn-primary" type="submit" value="Close Bidding">
+        </form>
+    {% else %}
+        <form action="{% url 'bid' listing.title %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <input class="form-control" type="number" name="bid" placeholder="Your Bid" required>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Place Bid">
+        </form>
+        {% endif %}
+{% else %}
+        <h3 class="text-warning">This bidding is closed!</h4>
+{% endif %}
+
+    {% endif %}
+    
+
+
+    <div style="padding-top: 50px; padding-bottom: 50px;">
+        <h4>Details:</h4>
+        <ul>    
+            <li>Listed by: {{listing.owner}}</li>
+            <li>Category: {{listing.category}}</li>
+        </ul>
+    </div>
+
+    <div>
+        {% if user.is_authenticated %}
+        <form action="{% url 'comment' listing.title%}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <input class="form-control" type="text" name="comment" placeholder="Your Comment" required>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Place Comment">
+        </form>
+        {% endif %}
+        <hr>
+        {% for comment in comments%}
+        <div class="row" style="padding: 10px;">
+            <div class="col-2 bg-white border">{{comment.owner.username}} said:</div>
+            <div class="col-4 bg-white border">{{comment.text}}</div>
+        </div>
+        {% endfor %}
+    </div>
+    
+{% endblock %}
